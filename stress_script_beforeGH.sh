@@ -48,3 +48,6 @@ case "$TYPE" in
         ;;
 esac
 
+
+#test1no
+##test2yes
