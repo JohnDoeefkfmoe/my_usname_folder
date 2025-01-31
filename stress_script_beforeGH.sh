@@ -1,44 +1,80 @@
 #!/bin/bash
 
-TYPE=$1  # Что нагружем: cpu или ram
-VALUE=$2 # Количесство потоков или памяти в MB
+TYPE=""
+THREADS="1"
+VALUE="1000"
+TIMEOUT="30"
 
-# тут аргументы принимаются
-if [[ -z "$TYPE" || -z "$VALUE" ]]; then
-    echo "Введите: $0 <cpu|ram> <значение>"
-    echo "Пример: $0 cpu 4  # Нагрузка на 4 потока"
-    echo "Пример: $0 ram 256  # Нагрузка на 256 MB"
+# Показ помощи
+help () {
+    echo "Использование: $0 --type <cpu|ram> [--threads <N>] [--value <MB>] [--timeout <секунды>]"
+    echo "Пример для CPU: $0 --type cpu --threads 4 --timeout 30  # Нагрузка на 4 потока CPU в течение 30 сек."
+    echo "Пример для RAM: $0 --type ram --value 256 --timeout 30  # Нагрузка на 256MB RAM в течение 30 сек."
     exit 1
+}
+
+# Разбор аргументов через getopts
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --type)
+            TYPE="$2"
+            shift 2
+            ;;
+        --threads)
+            THREADS="$2"
+            shift 2
+            ;;
+        --value)
+            VALUE="$2"
+            shift 2
+            ;;
+        --timeout)
+            TIMEOUT="$2"
+            shift 2
+            ;;
+        *)
+            echo "Неизвестный параметр"
+            help
+            ;;
+    esac
+done
+
+# Проверка аргументов
+if [[ -z "$TYPE" ]]; then
+    echo "Ошибка: Не указан тип нагрузки (--type cpu или ram)"
+    help
 fi
-# создание нагрузки на cpu
+
+# Создание нагрузки на CPU
 stress_cpu() {
-    echo "Нагрузка CPU на $VALUE потоков"
-    for i in $(seq 1 "$VALUE"); do
+    echo "Нагрузка CPU на $THREADS потоков. Завершится через $TIMEOUT секунд"
+    for i in $(seq 1 "$THREADS"); do
         while :; do :; done &
     done
-    echo "Нагрузка пошла. Ctrl+C для остановки."
+    sleep "$TIMEOUT" && kill $$ &
     wait
 }
-# создание нагрузки на ram
+
+# Создание нагрузки на RAM
 stress_ram() {
-    echo "Нагрузка RAM на $VALUE MB"
-    # Перевод значения из МБ в Б
+    echo "Нагрузка RAM на $VALUE MB (завершится через $TIMEOUT секунд)"
     BYTES=$((VALUE * 1024 * 1024))
     head -c "$BYTES" /dev/zero | tail >/dev/null &
-    echo "Нагрузка пошла. Ctrl+C для остановки."
+    sleep "$TIMEOUT" && kill $$ &
     wait
 }
-# остановка процессов
+
+# Завершение нагрузки
 clean() {
-    echo "Завершение нагрузки"
-    killall bash &>/dev/null
+    echo "Завершение нагрузки..."
+    pkill -P $$ 
     exit 0
 }
 
-# сигланы завершения
+# Обработка сигланов завершения
 trap clean SIGINT SIGTERM
 
-# Выбор типа нагрузки
+# Запуск нужной нагрузки
 case "$TYPE" in
     cpu)
         stress_cpu
@@ -46,6 +82,9 @@ case "$TYPE" in
     ram)
         stress_ram
         ;;
+    *)
+        echo "Ошибка: Неверный тип нагрузки. Используйте --type cpu или --type ram"
+        help
+        ;;
 esac
 
-#test
