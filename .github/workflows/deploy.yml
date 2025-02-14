@@ -1,14 +1,24 @@
-name: My first deploy
+name: create and commit file
 on:
   push:
     branches:
       - main
+
 jobs:
-  build:
+  create-file:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
-      - uses: actions/checkout@v2
+        uses: actions/checkout@v2
 
-      - name: create file "file-name.txt"
-        run: echo "test text in file" > file-name.txt
+      - name: Create file "new-file.txt"
+        run: echo "This is new file created by GitHub Actions" > new-file.txt
+
+      - name: Commit new file
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add new-file.txt
+          git commit -m "add new file created by gh actions"
+          git push
