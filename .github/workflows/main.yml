@@ -5,4 +5,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Print HW
-        run: echo 'Hello World'
+        run: echo 'Hello World! Its a first stage'
+  stage2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Stage2
+        run: echo 'Hello World! Its a second stage'
+  stage3: 
+  runs-on: ubuntu-latest
+  steps:
+    - name: Stage3
+      run: echo 'Hello World! Its a third stage'
