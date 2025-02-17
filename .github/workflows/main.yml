@@ -1,0 +1,8 @@
+name: My second workflow
+on: [push]
+jobs:
+  everyname:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print HW
+        run: echo 'Hello World'
