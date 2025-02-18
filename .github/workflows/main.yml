@@ -1,22 +1,22 @@
 name: My second workflow
 on: [push]
 jobs:
-  everyname:
+  joba1:
     runs-on: ubuntu-latest
     steps:
       - name: Print HW
         run: echo 'Hello World! Its a first stage'
 
-  stage2:
+  joba2:
     runs-on: ubuntu-latest
-    needs: everyname
+    needs: joba1
     steps:
       - name: Stage2
         run: echo 'Hello World! Its a second stage'
 
-  stage3:
+  joba3:
     runs-on: ubuntu-latest
-    needs: stage3
+    needs: joba2
     steps:
       - name: Stage3
         run: echo 'Hello World! Its a third stage'
