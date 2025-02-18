@@ -73,7 +73,7 @@ clean() {
 
 # Обработка сигланов завершения
 trap clean SIGINT SIGTERM
-
+# Add comment with Nvim
 # Запуск нужной нагрузки
 case "$TYPE" in
     cpu)
