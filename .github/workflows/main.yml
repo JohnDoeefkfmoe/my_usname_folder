@@ -9,12 +9,14 @@ jobs:
 
   stage2:
     runs-on: ubuntu-latest
+    needs: everyname
     steps:
       - name: Stage2
         run: echo 'Hello World! Its a second stage'
 
   stage3:
     runs-on: ubuntu-latest
+    needs: stage3
     steps:
       - name: Stage3
         run: echo 'Hello World! Its a third stage'
