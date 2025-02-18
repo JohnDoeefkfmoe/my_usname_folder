@@ -7,4 +7,4 @@ jobs:
     - name: first-step
       run: echo 'Hello world' > hw-file.txt
     - name: edit file hw
-      run echo 'Hello world 2' > hw-file.txt
+      run: echo 'Hello world 2' > hw-file.txt
